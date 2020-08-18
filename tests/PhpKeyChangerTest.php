@@ -169,4 +169,13 @@ class PhpKeyChangerTest extends TestCase
 
         $this->assertTrue(key($b) === 'single-level-array-key');
     }
+
+    public function testNumericKeys()
+    {
+        $a['one'][0]['two'][0]['three'][0] = 99;
+
+        $b = PhpKeyChanger::reKey($a, 'kebab');
+
+        $this->assertTrue(isset($b['one'][0]['two'][0]['three'][0]));
+    }
 }
