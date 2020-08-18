@@ -1,21 +1,22 @@
 {
-    "name": "ronappleton/php-key-changer",
-    "description": "Format Json string, object and array keys.",
-    "type": "project",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Ron Appleton",
-            "email": "ron.appleton@gmail.com"
-        }
-    ],
-    "require": {
-      "ext-json": "*",
-        "ext-http": "*"
-    },
-    "autoload": {
-        "psr-4": {
-            "RonAppleton\\PhpKeyChanger\\": "src/"
-        }
+  "name": "ronappleton/php-key-changer",
+  "description": "Format Json string, object and array keys.",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ron Appleton",
+      "email": "ron.appleton@gmail.com"
     }
+  ],
+  "require": {
+    "php": "7.4",
+    "ext-json": "*",
+    "ext-http": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "RonAppleton\\PhpKeyChanger\\": "src/"
+    }
+  }
 }
