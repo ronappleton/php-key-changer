@@ -1,6 +1,6 @@
 <?php
 
-namespace RonAppleton\PhpKeyChanger;
+require_once ('vendor/autoload.php');
 
 use PHPUnit\Framework\TestCase;
 
