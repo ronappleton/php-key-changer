@@ -1,5 +1,7 @@
 # PhpKeyChanger
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/61abb04599ea49acb623962f171b330e)](https://www.codacy.com/manual/ronappleton/php-key-changer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ronappleton/php-key-changer&amp;utm_campaign=Badge_Grade)
+
 Simple, PhpKeyChanger allows you to pass a json string, object or an array and it will recursively re-key the array using the case you give it.
 
 -   Camel Case
