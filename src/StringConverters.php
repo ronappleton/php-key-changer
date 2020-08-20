@@ -13,9 +13,9 @@ class StringConverters
      *
      * @return string
      */
-    public static function camel(string $value): string
+    public function camel(string $value): string
     {
-        return lcfirst(static::studly($value));
+        return lcfirst($this->studly($value));
     }
 
     /**
@@ -25,7 +25,7 @@ class StringConverters
      *
      * @return string
      */
-    public static function studly(string $value): string
+    public function studly(string $value): string
     {
         return ucwords(str_replace(['-', '_'], ' ', $value));
     }
@@ -37,9 +37,9 @@ class StringConverters
      *
      * @return string
      */
-    public static function pascal(string $value)
+    public function pascal(string $value)
     {
-        return str_replace(' ', '', static::studly($value));
+        return str_replace(' ', '', $this->studly($value));
     }
 
     /**
@@ -49,9 +49,9 @@ class StringConverters
      *
      * @return string
      */
-    public static function kebab(string $value)
+    public function kebab(string $value)
     {
-        return static::snake($value, '-');
+        return $this->snake($value, '-');
     }
 
     /**
@@ -62,12 +62,12 @@ class StringConverters
      *
      * @return string
      */
-    public static function snake(string $value, string $delimiter = '_')
+    public function snake(string $value, string $delimiter = '_')
     {
         if (!ctype_lower($value)) {
             $value = preg_replace('/\s+/u', '', ucwords($value));
 
-            $value = static::lower(preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $value));
+            $value = $this->lower(preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $value));
         }
 
         return $value;
@@ -80,7 +80,7 @@ class StringConverters
      *
      * @return string
      */
-    public static function lower(string $value)
+    public function lower(string $value)
     {
         return mb_strtolower($value, 'UTF-8');
     }

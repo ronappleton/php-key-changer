@@ -4,10 +4,37 @@ declare(strict_types=1);
 
 namespace RonAppleton\PhpKeyChanger;
 
-use http\Exception\RuntimeException;
+use RuntimeException;
 
+/**
+ * Class PhpKeyChanger
+ * @package RonAppleton\PhpKeyChanger
+ *
+ * Re key a json string, json object or an array
+ * to your chosen case.
+ */
 class PhpKeyChanger
 {
+    /**
+     * @var StringConverters
+     */
+    private StringConverters $stringConverters;
+
+    /**
+     * Track our object type.
+     *
+     * @var string
+     */
+    private string $type;
+
+    /**
+     * PhpKeyChanger constructor.
+     */
+    public function __construct()
+    {
+        $this->stringConverters = new StringConverters();
+    }
+
     /**
      * Return an array reKeyed to the chosen case.
      *
@@ -18,11 +45,11 @@ class PhpKeyChanger
      *
      * @return mixed
      */
-    public static function reKey($object, string $case = 'snake')
+    public function reKey($object, string $case = 'snake')
     {
-        $objectType = getType($object);
+        $this->type = $this->getType($object);
 
-        $object = static::getArray($object, $objectType);
+        $object = $this->getArray($object);
 
         if ($object === null) {
             throw new RuntimeException("Unable to convert object type for conversion [$objectType]");
@@ -30,10 +57,12 @@ class PhpKeyChanger
 
         $object = self::changeKeyCaseRecursive($object, $case);
 
-        if ($objectType === 'object') {
-            return static::getJsonObject($object);
-        } elseif ($objectType === 'string') {
-            return static::getJsonString($object);
+        if ($this->type === 'object') {
+            return $this->getJsonObject($object);
+        }
+
+        if ($this->type === 'string') {
+            return $this->getJsonString($object);
         }
 
         return $object;
@@ -43,21 +72,20 @@ class PhpKeyChanger
      * Get array from given object.
      *
      * @param $object
-     * @param string $type
      *
      * @return array|null
      */
-    private static function getArray($object, string $type): ?array
+    private function getArray($object): ?array
     {
-        if ($type === 'object') {
+        if ($this->type === 'object') {
             $object = json_decode(json_encode($object), true);
-        } else {
-            if ($type === 'string') {
-                $object = json_decode($object, true);
-            }
         }
 
-        return gettype($object) === 'array' ? $object : null;
+        if ($this->type === 'string') {
+            $object = json_decode($object, true);
+        }
+
+        return $this->getType($object) === 'array' ? $object : null;
     }
 
     /**
@@ -68,16 +96,16 @@ class PhpKeyChanger
      *
      * @return array
      */
-    private static function changeKeyCaseRecursive(array $array, string $case = 'snake'): array
+    private function changeKeyCaseRecursive(array $array, string $case = 'snake'): array
     {
         return array_map(
             function ($item) use ($case) {
                 if (is_array($item)) {
-                    $item = static::changeKeyCaseRecursive($item, $case);
+                    $item = $this->changeKeyCaseRecursive($item, $case);
                 }
                 return $item;
             },
-            static::changeKeyCase($array, $case)
+            $this->changeKeyCase($array, $case)
         );
     }
 
@@ -89,12 +117,12 @@ class PhpKeyChanger
      *
      * @return array
      */
-    private static function changeKeyCase(array $array, $case = 'snake'): array
+    private function changeKeyCase(array $array, $case = 'snake'): array
     {
         $newArray = [];
 
         foreach ($array as $key => $value) {
-            $newArray[is_string($key) ? StringConverters::$case($key) : $key] = $value;
+            $newArray[is_string($key) ? $this->stringConverters->$case($key) : $key] = $value;
         }
 
         return $newArray;
@@ -107,7 +135,7 @@ class PhpKeyChanger
      *
      * @return object
      */
-    private static function getJsonObject(array $array): object
+    private function getJsonObject(array $array): object
     {
         return json_decode(json_encode($array), false);
     }
@@ -119,8 +147,56 @@ class PhpKeyChanger
      *
      * @return string
      */
-    private static function getJsonString(array $array): string
+    private function getJsonString(array $array): string
     {
         return json_encode($array);
+    }
+
+    /**
+     * Find the object type.
+     *
+     * @param $object
+     *
+     * @return string
+     */
+    private function getType($object)
+    {
+        if (is_array($object)) {
+            return 'array';
+        }
+
+        if (is_object($object)) {
+            return 'object';
+        }
+
+        if (is_string($object)) {
+            return 'string';
+        }
+
+        if (is_bool($object)) {
+            return 'boolean';
+        }
+
+        if (is_float($object)) {
+            return 'float';
+        }
+
+        if (is_int($object)) {
+            return 'integer';
+        }
+
+        if (is_null($object)) {
+            return 'NULL';
+        }
+
+        if (is_numeric($object)) {
+            return 'numeric';
+        }
+
+        if (is_resource($object)) {
+            return 'resource';
+        }
+
+        return 'unknown';
     }
 }

@@ -1,12 +1,12 @@
-# What is it?
+# PhpKeyChanger
 
 Simple, PhpKeyChanger allows you to pass a json string, object or an array and it will recursively re-key the array using the case you give it.
 
-- Camel Case
-- Pascal Case
-- Snake Case
-- Kebab Case
-- Studly Case
+-   Camel Case
+-   Pascal Case
+-   Snake Case
+-   Kebab Case
+-   Studly Case
 
 ## Installation
 

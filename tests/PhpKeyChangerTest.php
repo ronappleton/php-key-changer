@@ -6,53 +6,61 @@ use PHPUnit\Framework\TestCase;
 
 class PhpKeyChangerTest extends TestCase
 {
+    private PhpKeyChanger $keyChanger;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->keyChanger = new PhpKeyChanger();
+    }
 
     public function testReKeyTypeArray()
     {
-        $a = [
+        $foo = [
           'SingleLevelArrayKey' => 1
         ];
 
-        $b = PhpKeyChanger::reKey($a, 'snake');
+        $bar = $this->keyChanger->reKey($foo, 'snake');
 
-        $this->assertIsArray($b, 'Array passed in to reKey not returned as an array');
+        $this->assertIsArray($bar, 'Array passed in to reKey not returned as an array');
 
-        $this->assertArrayHasKey('single_level_array_key', $b);
+        $this->assertArrayHasKey('single_level_array_key', $bar);
     }
 
     public function testReKeyTypeString()
     {
-        $a = [
+        $foo = [
           'SingleLevelArrayKey' => 1
         ];
 
-        $a = json_encode($a);
+        $foo = json_encode($foo);
 
-        $b = PhpKeyChanger::reKey($a, 'snake');
+        $bar = $this->keyChanger->reKey($foo, 'snake');
 
-        $this->assertIsString($b, 'String passed in to reKey not returned as a string');
+        $this->assertIsString($bar, 'String passed in to reKey not returned as a string');
 
-        $this->assertStringContainsString('single_level_array_key', $b);
+        $this->assertStringContainsString('single_level_array_key', $bar);
     }
 
     public function testReKeyTypeObject()
     {
-        $a = [
+        $foo = [
           'SingleLevelArrayKey' => 1
         ];
 
-        $a = json_decode(json_encode($a));
+        $foo = json_decode(json_encode($foo));
 
-        $b = PhpKeyChanger::reKey($a, 'snake');
+        $bar = $this->keyChanger->reKey($foo, 'snake');
 
-        $this->assertIsObject($b, 'Object passed in to reKey not returned as an object');
+        $this->assertIsObject($bar, 'Object passed in to reKey not returned as an object');
 
-        $this->assertObjectHasAttribute('single_level_array_key', $b);
+        $this->assertObjectHasAttribute('single_level_array_key', $bar);
     }
 
     public function testReKeyTypeArrayMulti()
     {
-        $a = [
+        $foo = [
           'SingleLevelArrayKey' => [
               'SecondaryKey' => [
                   'ThirdLevelKey' => [
@@ -62,16 +70,16 @@ class PhpKeyChangerTest extends TestCase
           ]
         ];
 
-        $b = PhpKeyChanger::reKey($a, 'kebab');
+        $bar = $this->keyChanger->reKey($foo, 'kebab');
 
-        $this->assertIsArray($b, 'Array passed in to reKey not returned as an array');
+        $this->assertIsArray($bar, 'Array passed in to reKey not returned as an array');
 
-        $this->assertTrue(isset($b['single-level-array-key']['secondary-key']['third-level-key']['fourth-level-key']));
+        $this->assertTrue(isset($bar['single-level-array-key']['secondary-key']['third-level-key']['fourth-level-key']));
     }
 
     public function testReKeyTypeStringMulti()
     {
-        $a = [
+        $foo = [
             'SingleLevelArrayKey' => [
                 'SecondaryKey' => [
                     'ThirdLevelKey' => [
@@ -81,20 +89,20 @@ class PhpKeyChangerTest extends TestCase
             ]
         ];
 
-        $a = json_encode($a);
+        $foo = json_encode($foo);
 
-        $b = PhpKeyChanger::reKey($a, 'kebab');
+        $bar = $this->keyChanger->reKey($foo, 'kebab');
 
-        $this->assertIsString($b, 'String passed in to reKey not returned as a string');
+        $this->assertIsString($bar, 'String passed in to reKey not returned as a string');
 
-        $this->assertStringContainsString('single-level-array-key', $b);
+        $this->assertStringContainsString('single-level-array-key', $bar);
 
-        $this->assertStringContainsString('fourth-level-key', $b);
+        $this->assertStringContainsString('fourth-level-key', $bar);
     }
 
     public function testReKeyTypeObjectMulti()
     {
-        $a = [
+        $foo = [
             'SingleLevelArrayKey' => [
                 'SecondaryKey' => [
                     'ThirdLevelKey' => [
@@ -104,78 +112,78 @@ class PhpKeyChangerTest extends TestCase
             ]
         ];
 
-        $a = json_decode(json_encode($a));
+        $foo = json_decode(json_encode($foo));
 
-        $b = PhpKeyChanger::reKey($a, 'kebab');
+        $bar = $this->keyChanger->reKey($foo, 'kebab');
 
-        $this->assertIsObject($b, 'Object passed in to reKey not returned as an object');
+        $this->assertIsObject($bar, 'Object passed in to reKey not returned as an object');
 
-        $this->assertObjectHasAttribute('single-level-array-key', $b);
+        $this->assertObjectHasAttribute('single-level-array-key', $bar);
 
-        $this->assertTrue(isset($b->{'single-level-array-key'}->{'secondary-key'}->{'third-level-key'}->{'fourth-level-key'}));
+        $this->assertTrue(isset($bar->{'single-level-array-key'}->{'secondary-key'}->{'third-level-key'}->{'fourth-level-key'}));
     }
 
     public function testCamel()
     {
-        $a = [
+        $foo = [
             'SingleLevelArrayKey' => 1
         ];
 
-        $b = PhpKeyChanger::reKey($a, 'camel');
+        $bar = $this->keyChanger->reKey($foo, 'camel');
 
-        $this->assertTrue(key($b) === 'singleLevelArrayKey');
+        $this->assertTrue(key($bar) === 'singleLevelArrayKey');
     }
 
     public function testPascal()
     {
-        $a = [
+        $foo = [
             'SingleLevelArrayKey' => 1
         ];
 
-        $b = PhpKeyChanger::reKey($a, 'pascal');
+        $bar = $this->keyChanger->reKey($foo, 'pascal');
 
-        $this->assertTrue(key($b) === 'SingleLevelArrayKey');
+        $this->assertTrue(key($bar) === 'SingleLevelArrayKey');
     }
 
     public function testStudly()
     {
-        $a = [
+        $foo = [
             'Single_Level_Array_Key' => 1
         ];
 
-        $b = PhpKeyChanger::reKey($a, 'studly');
+        $bar = $this->keyChanger->reKey($foo, 'studly');
 
-        $this->assertTrue(key($b) === 'Single Level Array Key');
+        $this->assertTrue(key($bar) === 'Single Level Array Key');
     }
 
     public function testSnake()
     {
-        $a = [
+        $foo = [
             'SingleLevelArrayKey' => 1
         ];
 
-        $b = PhpKeyChanger::reKey($a, 'snake');
+        $bar = $this->keyChanger->reKey($foo, 'snake');
 
-        $this->assertTrue(key($b) === 'single_level_array_key');
+        $this->assertTrue(key($bar) === 'single_level_array_key');
     }
 
     public function testKebab()
     {
-        $a = [
+        $foo = [
             'SingleLevelArrayKey' => 1
         ];
 
-        $b = PhpKeyChanger::reKey($a, 'kebab');
+        $bar = $this->keyChanger->reKey($foo, 'kebab');
 
-        $this->assertTrue(key($b) === 'single-level-array-key');
+        $this->assertTrue(key($bar) === 'single-level-array-key');
     }
 
     public function testNumericKeys()
     {
-        $a['one'][0]['two'][0]['three'][0] = 99;
+        $foo['one'][0]['two'][0]['three'][0] = 99;
 
-        $b = PhpKeyChanger::reKey($a, 'kebab');
+        $bar = $this->keyChanger->reKey($foo, 'kebab');
 
-        $this->assertTrue(isset($b['one'][0]['two'][0]['three'][0]));
+        $this->assertTrue(isset($bar['one'][0]['two'][0]['three'][0]));
     }
 }
