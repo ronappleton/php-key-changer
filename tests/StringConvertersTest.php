@@ -1,7 +1,5 @@
 <?php
 
-require_once ('../vendor/autoload.php');
-
 use RonAppleton\PhpKeyChanger\StringConverters;
 use PHPUnit\Framework\TestCase;
 
