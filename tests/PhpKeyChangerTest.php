@@ -1,7 +1,10 @@
 <?php
 
-require_once ('vendor/autoload.php');
+require_once ('../vendor/autoload.php');
 
+use RonAppleton\PhpKeyChanger\PhpKeyChanger;
+use RonAppleton\PhpKeyChanger\TypeConverters;
+use RonAppleton\PhpKeyChanger\StringConverters;
 use PHPUnit\Framework\TestCase;
 
 class PhpKeyChangerTest extends TestCase
