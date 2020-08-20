@@ -8,14 +8,12 @@ class PhpKeyChangerTest extends TestCase
 {
     private PhpKeyChanger $keyChanger;
 
-    public function __construct()
+    protected function setUp(): void
     {
-        parent::__construct();
-
-        $this->keyChanger = new PhpKeyChanger();
+        $this->keyChanger = new PhpKeyChanger(new TypeConverters(), new StringConverters());
     }
 
-    public function testReKeyTypeArray()
+    public function testReKeyArray()
     {
         $foo = [
           'SingleLevelArrayKey' => 1
@@ -28,7 +26,7 @@ class PhpKeyChangerTest extends TestCase
         $this->assertArrayHasKey('single_level_array_key', $bar);
     }
 
-    public function testReKeyTypeString()
+    public function testReKeyString()
     {
         $foo = [
           'SingleLevelArrayKey' => 1
@@ -43,7 +41,7 @@ class PhpKeyChangerTest extends TestCase
         $this->assertStringContainsString('single_level_array_key', $bar);
     }
 
-    public function testReKeyTypeObject()
+    public function testReKeyObject()
     {
         $foo = [
           'SingleLevelArrayKey' => 1
@@ -58,7 +56,7 @@ class PhpKeyChangerTest extends TestCase
         $this->assertObjectHasAttribute('single_level_array_key', $bar);
     }
 
-    public function testReKeyTypeArrayMulti()
+    public function testReKeyArrayMulti()
     {
         $foo = [
           'SingleLevelArrayKey' => [
@@ -77,7 +75,7 @@ class PhpKeyChangerTest extends TestCase
         $this->assertTrue(isset($bar['single-level-array-key']['secondary-key']['third-level-key']['fourth-level-key']));
     }
 
-    public function testReKeyTypeStringMulti()
+    public function testReKeyStringMulti()
     {
         $foo = [
             'SingleLevelArrayKey' => [
@@ -100,7 +98,7 @@ class PhpKeyChangerTest extends TestCase
         $this->assertStringContainsString('fourth-level-key', $bar);
     }
 
-    public function testReKeyTypeObjectMulti()
+    public function testReKeyObjectMulti()
     {
         $foo = [
             'SingleLevelArrayKey' => [
@@ -121,61 +119,6 @@ class PhpKeyChangerTest extends TestCase
         $this->assertObjectHasAttribute('single-level-array-key', $bar);
 
         $this->assertTrue(isset($bar->{'single-level-array-key'}->{'secondary-key'}->{'third-level-key'}->{'fourth-level-key'}));
-    }
-
-    public function testCamel()
-    {
-        $foo = [
-            'SingleLevelArrayKey' => 1
-        ];
-
-        $bar = $this->keyChanger->reKey($foo, 'camel');
-
-        $this->assertTrue(key($bar) === 'singleLevelArrayKey');
-    }
-
-    public function testPascal()
-    {
-        $foo = [
-            'SingleLevelArrayKey' => 1
-        ];
-
-        $bar = $this->keyChanger->reKey($foo, 'pascal');
-
-        $this->assertTrue(key($bar) === 'SingleLevelArrayKey');
-    }
-
-    public function testStudly()
-    {
-        $foo = [
-            'Single_Level_Array_Key' => 1
-        ];
-
-        $bar = $this->keyChanger->reKey($foo, 'studly');
-
-        $this->assertTrue(key($bar) === 'Single Level Array Key');
-    }
-
-    public function testSnake()
-    {
-        $foo = [
-            'SingleLevelArrayKey' => 1
-        ];
-
-        $bar = $this->keyChanger->reKey($foo, 'snake');
-
-        $this->assertTrue(key($bar) === 'single_level_array_key');
-    }
-
-    public function testKebab()
-    {
-        $foo = [
-            'SingleLevelArrayKey' => 1
-        ];
-
-        $bar = $this->keyChanger->reKey($foo, 'kebab');
-
-        $this->assertTrue(key($bar) === 'single-level-array-key');
     }
 
     public function testNumericKeys()

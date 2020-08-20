@@ -21,18 +21,20 @@ class PhpKeyChanger
     private StringConverters $stringConverters;
 
     /**
-     * Track our object type.
-     *
-     * @var string
+     * @var TypeConverters
      */
-    private string $type;
+    private TypeConverters $typeConverters;
 
     /**
      * PhpKeyChanger constructor.
+     *
+     * @param TypeConverters $typeConverters
+     * @param StringConverters $stringConverters
      */
-    public function __construct()
+    public function __construct(TypeConverters $typeConverters, StringConverters $stringConverters)
     {
-        $this->stringConverters = new StringConverters();
+        $this->typeConverters = $typeConverters;
+        $this->stringConverters = $stringConverters;
     }
 
     /**
@@ -47,45 +49,25 @@ class PhpKeyChanger
      */
     public function reKey($object, string $case = 'snake')
     {
-        $this->type = $this->getType($object);
+        $type = $this->typeConverters->getType($object);
 
-        $object = $this->getArray($object);
+        $object = $this->typeConverters->getArray($object, $type);
 
         if ($object === null) {
-            throw new RuntimeException("Unable to convert object type for conversion [$this->type]");
+            throw new RuntimeException("Unable to convert object type for conversion [$type]");
         }
 
         $object = self::changeKeyCaseRecursive($object, $case);
 
-        if ($this->type === 'object') {
-            return $this->getJsonObject($object);
+        if ($type === 'object') {
+            return $this->typeConverters->getJsonObject($object);
         }
 
-        if ($this->type === 'string') {
-            return $this->getJsonString($object);
+        if ($type === 'string') {
+            return $this->typeConverters->getJsonString($object);
         }
 
         return $object;
-    }
-
-    /**
-     * Get array from given object.
-     *
-     * @param $object
-     *
-     * @return array|null
-     */
-    private function getArray($object): ?array
-    {
-        if ($this->type === 'object') {
-            $object = json_decode(json_encode($object), true);
-        }
-
-        if ($this->type === 'string') {
-            $object = json_decode($object, true);
-        }
-
-        return $this->getType($object) === 'array' ? $object : null;
     }
 
     /**
@@ -126,77 +108,5 @@ class PhpKeyChanger
         }
 
         return $newArray;
-    }
-
-    /**
-     * Returns an array as a json object.
-     *
-     * @param array $array
-     *
-     * @return object
-     */
-    private function getJsonObject(array $array): object
-    {
-        return json_decode(json_encode($array), false);
-    }
-
-    /**
-     * Returns an array as a json string.
-     *
-     * @param array $array
-     *
-     * @return string
-     */
-    private function getJsonString(array $array): string
-    {
-        return json_encode($array);
-    }
-
-    /**
-     * Find the object type.
-     *
-     * @param $object
-     *
-     * @return string
-     */
-    private function getType($object)
-    {
-        if (is_array($object)) {
-            return 'array';
-        }
-
-        if (is_object($object)) {
-            return 'object';
-        }
-
-        if (is_string($object)) {
-            return 'string';
-        }
-
-        if (is_bool($object)) {
-            return 'boolean';
-        }
-
-        if (is_float($object)) {
-            return 'float';
-        }
-
-        if (is_int($object)) {
-            return 'integer';
-        }
-
-        if ($object === null) {
-            return 'null';
-        }
-
-        if (is_numeric($object)) {
-            return 'numeric';
-        }
-
-        if (is_resource($object)) {
-            return 'resource';
-        }
-
-        return 'unknown';
     }
 }

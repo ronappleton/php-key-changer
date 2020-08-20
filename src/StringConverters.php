@@ -65,6 +65,9 @@ class StringConverters
     public function snake(string $value, string $delimiter = '_')
     {
         if (!ctype_lower($value)) {
+
+            $value = $this->studly($value);
+
             $value = preg_replace('/\s+/u', '', ucwords($value));
 
             $value = $this->lower(preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $value));
