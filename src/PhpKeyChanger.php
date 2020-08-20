@@ -52,7 +52,7 @@ class PhpKeyChanger
         $object = $this->getArray($object);
 
         if ($object === null) {
-            throw new RuntimeException("Unable to convert object type for conversion [$objectType]");
+            throw new RuntimeException("Unable to convert object type for conversion [$this->type]");
         }
 
         $object = self::changeKeyCaseRecursive($object, $case);
