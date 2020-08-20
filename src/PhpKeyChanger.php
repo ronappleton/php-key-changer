@@ -185,8 +185,8 @@ class PhpKeyChanger
             return 'integer';
         }
 
-        if (is_null($object)) {
-            return 'NULL';
+        if ($object === null) {
+            return 'null';
         }
 
         if (is_numeric($object)) {
